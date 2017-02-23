@@ -2,7 +2,7 @@
 * @Author: liuyany.liu <lyan>
 * @Date:   2017-02-07 15:45:15
 * @Last modified by:   lyan
-* @Last modified time: 2017-02-23 19:49:32
+* @Last modified time: 2017-02-23 23:34:49
 */
 
 import React, {
@@ -25,6 +25,9 @@ import React, {
 import EventEmitter from 'EventEmitter';
 import RootSiblings from './SiblingsManager';
 
+const { width, height } = Dimensions.get('window');
+const [CLIENT_WIDTH, CLIENT_HEIGHT] = [width, height]
+
 export default class Example extends Component {
     state = {
         value: 'hahah'
@@ -34,7 +37,7 @@ export default class Example extends Component {
           <View style={styles.container}>
               <Intro style={[styles.content]}
                   group="test1"
-                  content="哈哈哈哈这里是新手引导"
+                  content="这是啥"
                   disable={false}
                   step={1}
               >
@@ -44,7 +47,7 @@ export default class Example extends Component {
                       value={this.state.value}/>
                       <Intro style={{top: 200, left: 100, position: 'absolute'}}
                           group="test1"
-                          content="哈哈哈哈这里是新手引导"
+                          content="哈哈哈哈这里是新手引导哈哈哈哈这里是新手引导哈哈哈哈这里是新手引导哈哈哈哈这里是新手引导"
                           disable={false}
                           step={2}>
                           <Text>呵呵呵呵</Text>
@@ -52,7 +55,7 @@ export default class Example extends Component {
               </Intro>
               <Intro style={{top: 400, left: 100, position: 'absolute'}}
                group="test1"
-               content="哈哈哈哈这里是新手引导"
+               content="红色方框"
                disable={false}
                step={3}>
                 <View style={{width: 100, height: 100, backgroundColor: '#ff0000'}}>
@@ -62,7 +65,8 @@ export default class Example extends Component {
               <Intro
                   group="test1"
                   step={4}
-                   style={[styles.button, {position: 'absolute'}]}
+                  content="点击我！"
+                  style={[styles.button, {position: 'absolute'}]}
                   >
                       <TouchableOpacity onPress={ this._showModal.bind(this)}><Text>点我</Text></TouchableOpacity>
 
@@ -207,14 +211,18 @@ function intro(g = DEFAULT_GROUP) {
      */
     function toStep(index) {
 
-        target = group[stepArr[index]].target;
-        refTarget = group[stepArr[index]].refTarget;
+        var currentStep = group[stepArr[index]];
+        var content = currentStep.content;
+        target = currentStep.target;
+        refTarget = currentStep.refTarget;
         element = target.html;
         element = cloneElement(element, {
             style: [element.props.style, {position: 'absolute',left: 0, top: 0}]
         });
         refModal.innerElement = null;
         refModal.forceUpdate();
+
+
         new Promise((resolve, reject) => {
             refTarget.measure((x, y, width, height, pageX, pageY) => {
                 resolve({ x, y, width, height, pageX, pageY });
@@ -232,6 +240,7 @@ function intro(g = DEFAULT_GROUP) {
             setTimeout(() => {
                 refModal.innerElement = element;
                 refModal.currentStep = index+1;
+                refModal.content = <View><Text>{content}</Text></View>;
                 refModal.forceUpdate(() => {
                     refModal.refContainer.setNativeProps({
                         style: obj
@@ -264,8 +273,8 @@ class IntroModal extends Component {
 
         this._aniWidth = new Animated.Value(0);
         this._aniHeight = new Animated.Value(0);
-        this._aniLeft = new Animated.Value(100);
-        this._aniTop = new Animated.Value(100);
+        this._aniLeft = new Animated.Value(0);
+        this._aniTop = new Animated.Value(0);
     }
 
     animateMove(obj = {}) {
@@ -287,7 +296,8 @@ class IntroModal extends Component {
                 duration,
                 toValue: obj.top
             })
-        ]).start()
+        ]).start();
+
     }
 
     render() {
@@ -313,12 +323,33 @@ class IntroModal extends Component {
                 }]}>
                     <Text style={[styles.stepNumText]}>{this.currentStep}</Text>
                 </Animated.View>
-                <View style={{top: 300, position: 'absolute'}} onTouchStart={() => this.props.prev()}>
-                    <Text>上一个</Text>
-                </View>
-                <View style={{top: 400, position: 'absolute'}} onTouchStart={() => this.props.next()}>
-                    <Text>下一个</Text>
-                </View>
+                <Animated.View style={[styles.toolTipOuter, {
+                    left: this._aniLeft,
+                    top: Animated.add(this._aniTop, this._aniHeight,  10)
+                }]}>
+                    <View style={[styles.arrow, styles.up]}></View>
+                    <View style={[styles.toolTip]}>
+                        <View>
+                            {this.content || null}
+                        </View>
+                        <View style={[styles.introBar]}>
+                            <View style={[styles.introButton, {
+                                borderColor: '#999',
+                                marginRight: 20
+                            }]} onTouchStart={() => this.props.stop()}>
+                                <Text style={[styles.buttonText, {
+                                    color: '#999'
+                                }]}>OK</Text>
+                            </View>
+                            <View style={[styles.introButton]} onTouchStart={() => this.props.prev()}>
+                                <Text style={[styles.buttonText]}>prev</Text>
+                            </View>
+                            <View style={[styles.introButton, {marginLeft: 8}]} onTouchStart={() => this.props.next()}>
+                                <Text style={[styles.buttonText]}>next</Text>
+                            </View>
+                        </View>
+                    </View>
+                </Animated.View>
             </View>
         );
     }
@@ -334,7 +365,7 @@ const styles = StyleSheet.create({
   },
   hilightBox: {
       position: 'absolute',
-      backgroundColor: 'rgba(255,255,255,0.8)',
+      backgroundColor: 'rgba(255,255,255,1)',
       borderRadius: 2,
   },
   content: {
@@ -345,6 +376,28 @@ const styles = StyleSheet.create({
       left: 100,
       borderWidth: 1,
       borderColor: 'red'
+  },
+  arrow: {
+      position: 'absolute',
+      borderColor: 'transparent',
+      borderWidth: 5
+  },
+  up: {
+      borderBottomColor: '#fff',
+      left: 10
+  },
+  toolTipOuter: {
+      position: 'absolute',
+      minWidth: 180,
+      maxWidth: 300,
+  },
+  toolTip: {
+      position: 'absolute',
+      top: 10,
+      padding: 5,
+      backgroundColor: '#fff',
+      borderRadius: 3,
+      overflow: 'hidden'
   },
   stepNum: {
       position: 'absolute',
@@ -376,6 +429,22 @@ const styles = StyleSheet.create({
     height: 44,
     position: 'absolute',
     bottom: 100
+  },
+  introButton: {
+      padding: 2,
+      borderColor: '#28a3ef',
+      borderWidth: 1,
+      borderRadius: 2,
+  },
+  buttonText: {
+      fontSize: 12,
+      textAlign: 'center',
+      color: '#28a3ef'
+  },
+  introBar: {
+      marginTop: 10,
+      flexDirection: 'row',
+      justifyContent: 'flex-end'
   },
   modalContent: {
       position: 'absolute',
