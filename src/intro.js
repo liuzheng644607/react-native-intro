@@ -2,7 +2,7 @@
 * @Author: liuyany.liu <lyan>
 * @Date:   2017-02-07 15:45:15
 * @Last modified by:   lyan
-* @Last modified time: 2017-02-23 13:25:03
+* @Last modified time: 2017-02-23 19:49:32
 */
 
 import React, {
@@ -59,7 +59,14 @@ export default class Example extends Component {
 
                 </View>
               </Intro>
-              <TouchableOpacity onPress={ this._showModal.bind(this)} style={styles.button}><Text>点我</Text></TouchableOpacity>
+              <Intro
+                  group="test1"
+                  step={4}
+                   style={[styles.button, {position: 'absolute'}]}
+                  >
+                      <TouchableOpacity onPress={ this._showModal.bind(this)}><Text>点我</Text></TouchableOpacity>
+
+              </Intro>
           </View>
         );
     }
@@ -224,6 +231,7 @@ function intro(g = DEFAULT_GROUP) {
 
             setTimeout(() => {
                 refModal.innerElement = element;
+                refModal.currentStep = index+1;
                 refModal.forceUpdate(() => {
                     refModal.refContainer.setNativeProps({
                         style: obj
@@ -231,11 +239,12 @@ function intro(g = DEFAULT_GROUP) {
                 });
             }, 300)
 
+            var offsetW = 4;
             refModal.animateMove({
-                width: res.width + 4,
-                height: res.height + 4,
-                left: res.pageX - 2,
-                top: res.pageY - 2
+                width: res.width + offsetW,
+                height: res.height + offsetW,
+                left: res.pageX - offsetW/2,
+                top: res.pageY - offsetW/2
             })
         })
 
@@ -251,6 +260,8 @@ class IntroModal extends Component {
         super(props);
 
         this.innerElement = null;
+        this.currentStep = 1;
+
         this._aniWidth = new Animated.Value(0);
         this._aniHeight = new Animated.Value(0);
         this._aniLeft = new Animated.Value(100);
@@ -284,7 +295,7 @@ class IntroModal extends Component {
             <View style={[styles.container, {zIndex}]}>
                 <TouchableOpacity activeOpacity={0.8} style={[styles.sibling]} onPress={this.props.stop}/>
                 <Animated.View ref={(c) => this.refHilightBox = c}
-                    style={[styles.hilightBox, {
+                    style={[styles.hilightBox, {position: 'absolute'}, {
                         width: this._aniWidth,
                         height: this._aniHeight,
                         left: this._aniLeft,
@@ -296,6 +307,12 @@ class IntroModal extends Component {
                     >
                         {this.innerElement}
                 </View>
+                <Animated.View style={[styles.stepNum, {zIndex: zIndex+1000}, {
+                    left: Animated.add(this._aniLeft, -12),
+                    top: Animated.add(this._aniTop, -12)
+                }]}>
+                    <Text style={[styles.stepNumText]}>{this.currentStep}</Text>
+                </Animated.View>
                 <View style={{top: 300, position: 'absolute'}} onTouchStart={() => this.props.prev()}>
                     <Text>上一个</Text>
                 </View>
@@ -329,13 +346,30 @@ const styles = StyleSheet.create({
       borderWidth: 1,
       borderColor: 'red'
   },
+  stepNum: {
+      position: 'absolute',
+      width: 24,
+      height: 24,
+      borderWidth: 2,
+      borderRadius: 12,
+      borderColor: '#fff',
+      backgroundColor: "#28a3ef",
+      overflow: 'hidden',
+      alignItems: 'center',
+      justifyContent: 'center'
+  },
+  stepNumText: {
+      backgroundColor: 'none',
+      fontWeight: 'bold',
+      color: '#fff'
+  },
   sibling: {
       position: 'absolute',
       left: 0,
       top: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: 'rgba(0,0,0,0.5)'
+      backgroundColor: 'rgba(0,0,0,0.8)'
   },
   button: {
     width: 100,
