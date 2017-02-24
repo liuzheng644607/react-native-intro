@@ -2,7 +2,7 @@
 * @Author: liuyany.liu <lyan>
 * @Date:   2017-02-07 15:45:15
 * @Last modified by:   lyan
-* @Last modified time: 2017-02-23 23:34:49
+* @Last modified time: 2017-02-24 10:15:04
 */
 
 import React, {
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
   },
   toolTip: {
       position: 'absolute',
-      top: 10,
+      top: 9,
       padding: 5,
       backgroundColor: '#fff',
       borderRadius: 3,
