@@ -2,7 +2,7 @@
 * @Author: liuyany.liu <lyan>
 * @Date:   2017-02-07 15:45:15
 * @Last modified by:   lyan
-* @Last modified time: 2017-02-25 21:07:31
+* @Last modified time: 2017-02-25 21:11:18
 */
 
 import React, {
@@ -245,7 +245,7 @@ function intro(g = DEFAULT_GROUP) {
             timer = setTimeout(() => {
                 refModal.innerElement = element;
                 refModal.currentStep = index+1;
-                refModal.content = <View><Text>{content}</Text></View>;
+                refModal.content = typeof content === 'string' ? <View><Text>{content}</Text></View> : content;
                 refModal.forceUpdate(() => {
                     refModal.refContainer.setNativeProps({
                         style: obj
