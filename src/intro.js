@@ -2,7 +2,7 @@
 * @Author: liuyany.liu <lyan>
 * @Date:   2017-02-07 15:45:15
 * @Last modified by:   lyan
-* @Last modified time: 2017-02-24 10:15:04
+* @Last modified time: 2017-02-25 21:07:31
 */
 
 import React, {
@@ -53,12 +53,12 @@ export default class Example extends Component {
                           <Text>呵呵呵呵</Text>
                       </Intro>
               </Intro>
-              <Intro style={{top: 400, left: 100, position: 'absolute'}}
+              <Intro style={{top: 400, left: 0, position: 'absolute'}}
                group="test1"
                content="红色方框"
                disable={false}
                step={3}>
-                <View style={{width: 100, height: 100, backgroundColor: '#ff0000'}}>
+                <View style={{width: 400, height: 100, backgroundColor: '#ff0000'}}>
 
                 </View>
               </Intro>
@@ -151,6 +151,8 @@ function intro(g = DEFAULT_GROUP) {
     var element;
     var refModal;
     var retn = { start, stop };
+    var timer = null;
+    var stepTimer = null;
 
     /**
      * 开始
@@ -168,7 +170,10 @@ function intro(g = DEFAULT_GROUP) {
             );
         }
 
-        setTimeout(() => {
+        clearTimeout(stepTimer);
+        clearTimeout(timer);
+
+        stepTimer = setTimeout(() => {
             toStep(index);
         });
     }
@@ -236,8 +241,8 @@ function intro(g = DEFAULT_GROUP) {
                 left: res.pageX,
                 top: res.pageY
             };
-
-            setTimeout(() => {
+            refModal.toggleTooltip(false);
+            timer = setTimeout(() => {
                 refModal.innerElement = element;
                 refModal.currentStep = index+1;
                 refModal.content = <View><Text>{content}</Text></View>;
@@ -246,6 +251,7 @@ function intro(g = DEFAULT_GROUP) {
                         style: obj
                     });
                 });
+                refModal.toggleTooltip(true);
             }, 300)
 
             var offsetW = 4;
@@ -275,10 +281,24 @@ class IntroModal extends Component {
         this._aniHeight = new Animated.Value(0);
         this._aniLeft = new Animated.Value(0);
         this._aniTop = new Animated.Value(0);
+
+        this._aniOpacity = new Animated.Value(0);
+
+        this._aniStepNumLeft = new Animated.Value(0);
+
     }
 
     animateMove(obj = {}) {
         var duration = 300;
+
+        var stepNumLeft = obj.left - 12;
+        if (stepNumLeft < 0) {
+            stepNumLeft = obj.left + obj.width - 12;
+            if (stepNumLeft > CLIENT_WIDTH - 24) {
+                stepNumLeft = CLIENT_WIDTH - 24;
+            }
+        }
+
         Animated.parallel([
             Animated.timing(this._aniWidth, {
                 duration,
@@ -295,9 +315,72 @@ class IntroModal extends Component {
             Animated.timing(this._aniTop, {
                 duration,
                 toValue: obj.top
+            }),
+            Animated.timing(this._aniStepNumLeft, {
+                duration,
+                toValue: stepNumLeft
             })
         ]).start();
 
+        var centerPoint = {
+            x: obj.left + obj.width/2,
+            y: obj.top + obj.height/2
+         };
+
+         var relative2Left = centerPoint.x;
+         var relative2Top = centerPoint.y;
+         var relative2Bottom = Math.abs(centerPoint.y - CLIENT_HEIGHT);
+         var relative2Right = Math.abs(centerPoint.x - CLIENT_WIDTH);
+
+         var whereVerticalPlace = relative2Bottom > relative2Top ? 'bottom' : 'top';
+         var whereHorizontalPlace = relative2Left > relative2Right ? 'left' : 'right';
+
+         var margin = 13;
+         var tooltip = {};
+         var arrow = {};
+
+         switch (whereVerticalPlace) {
+
+             case 'bottom':
+                tooltip.top = obj.top + obj.height + margin;
+                arrow.borderBottomColor = '#fff';
+                arrow.top = tooltip.top - margin + 3;
+             break;
+
+             case 'top':
+                tooltip.bottom = CLIENT_HEIGHT - obj.top + margin;
+                arrow.borderTopColor = '#fff';
+                arrow.bottom = tooltip.bottom - margin + 3;
+             break;
+             default:
+         }
+
+         switch (whereHorizontalPlace) {
+             case 'left':
+                tooltip.right = Math.max(CLIENT_WIDTH - (obj.left + obj.width), 0);
+                tooltip.right = tooltip.right === 0 ? tooltip.right + margin : tooltip.right;
+                tooltip.maxWidth = CLIENT_WIDTH - tooltip.right - margin;
+                arrow.right = tooltip.right + margin;
+                break;
+             case 'right':
+                tooltip.left = Math.max(obj.left, 0);
+                tooltip.left = tooltip.left === 0 ? tooltip.left + margin : tooltip.left;
+                arrow.left = tooltip.left + margin;
+                break;
+             default:
+         }
+
+         this.tooltip = tooltip;
+         this.arrow = arrow;
+
+
+    }
+
+    toggleTooltip(isShow = true) {
+        Animated.timing(this._aniOpacity, {
+            toValue: isShow ? 1 : 0,
+            duration: 200
+        }).start();
     }
 
     render() {
@@ -318,18 +401,15 @@ class IntroModal extends Component {
                         {this.innerElement}
                 </View>
                 <Animated.View style={[styles.stepNum, {zIndex: zIndex+1000}, {
-                    left: Animated.add(this._aniLeft, -12),
+                    left: this._aniStepNumLeft,
                     top: Animated.add(this._aniTop, -12)
                 }]}>
                     <Text style={[styles.stepNumText]}>{this.currentStep}</Text>
                 </Animated.View>
-                <Animated.View style={[styles.toolTipOuter, {
-                    left: this._aniLeft,
-                    top: Animated.add(this._aniTop, this._aniHeight,  10)
-                }]}>
-                    <View style={[styles.arrow, styles.up]}></View>
-                    <View style={[styles.toolTip]}>
-                        <View>
+                {/* <Animated.View style={[styles.toolTipOuter, this.tooltip]}> */}
+                    <Animated.View style={[styles.arrow, this.arrow, {opacity: this._aniOpacity}]}></Animated.View>
+                    <Animated.View style={[styles.toolTip, this.tooltip, {opacity: this._aniOpacity}]}>
+                        <View style={{flex: 1, marginBottom: 10}}>
                             {this.content || null}
                         </View>
                         <View style={[styles.introBar]}>
@@ -348,8 +428,8 @@ class IntroModal extends Component {
                                 <Text style={[styles.buttonText]}>next</Text>
                             </View>
                         </View>
-                    </View>
-                </Animated.View>
+                    </Animated.View>
+                {/* </Animated.View> */}
             </View>
         );
     }
@@ -383,17 +463,18 @@ const styles = StyleSheet.create({
       borderWidth: 5
   },
   up: {
-      borderBottomColor: '#fff',
-      left: 10
+      borderBottomColor: '#fff'
+  },
+  down: {
+      borderTopColor: '#fff'
   },
   toolTipOuter: {
       position: 'absolute',
       minWidth: 180,
-      maxWidth: 300,
+      maxWidth: 300
   },
   toolTip: {
       position: 'absolute',
-      top: 9,
       padding: 5,
       backgroundColor: '#fff',
       borderRadius: 3,
@@ -412,7 +493,7 @@ const styles = StyleSheet.create({
       justifyContent: 'center'
   },
   stepNumText: {
-      backgroundColor: 'none',
+      backgroundColor: 'rgba(255,255,255,0)',
       fontWeight: 'bold',
       color: '#fff'
   },
