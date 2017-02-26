@@ -2,7 +2,7 @@
 * @Author: liuyany.liu <lyan>
 * @Date:   2017-02-07 15:45:15
 * @Last modified by:   lyan
-* @Last modified time: 2017-02-25 21:11:18
+* @Last modified time: 2017-02-26 10:05:47
 */
 
 import React, {
@@ -36,7 +36,6 @@ export default class Example extends Component {
         return (
           <View style={styles.container}>
               <Intro style={[styles.content]}
-                  group="test1"
                   content="这是啥"
                   disable={false}
                   step={1}
@@ -47,7 +46,12 @@ export default class Example extends Component {
                       value={this.state.value}/>
                       <Intro style={{top: 200, left: 100, position: 'absolute'}}
                           group="test1"
-                          content="哈哈哈哈这里是新手引导哈哈哈哈这里是新手引导哈哈哈哈这里是新手引导哈哈哈哈这里是新手引导"
+                          content={
+                              <View style={{alignItems: 'center'}}>
+                                    <Image source={{uri: 'https://avatars3.githubusercontent.com/u/8045477?v=3&s=460'}}
+                                    style={{width: 100, height: 100}}></Image>
+                              </View>
+                          }
                           disable={false}
                           step={2}>
                           <Text>呵呵呵呵</Text>
@@ -55,7 +59,7 @@ export default class Example extends Component {
               </Intro>
               <Intro style={{top: 400, left: 0, position: 'absolute'}}
                group="test1"
-               content="红色方框"
+               content="红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框"
                disable={false}
                step={3}>
                 <View style={{width: 400, height: 100, backgroundColor: '#ff0000'}}>
@@ -76,7 +80,7 @@ export default class Example extends Component {
     }
 
     componentDidMount() {
-        this.intro = intro('test1');
+        this.intro = intro({group: 'test1'});
     }
 
     _showModal() {
@@ -117,7 +121,7 @@ class Intro extends Component {
     }
 
     componentWillUnmount() {
-        const { group, step, content, disable } = this.props;
+        // const { group, step, content, disable } = this.props;
         //
         // delete groupMap[group || DEFAULT_GROUP][step];
         //
@@ -139,9 +143,9 @@ var hilightBox = null;
 var refHilightBox;
 var zIndex  = 99999;
 
-function intro(g = DEFAULT_GROUP) {
+function intro(opts = {group: DEFAULT_GROUP}) {
     // 1 拿出分组数据
-    var group   = groupMap[g];
+    var group   = groupMap[opts.group];
     var stepArr = Object.keys(group).sort();
     var len     = stepArr.length;
     var index   = 0;
@@ -183,6 +187,8 @@ function intro(g = DEFAULT_GROUP) {
      * @return {[type]} [description]
      */
     function stop() {
+        clearTimeout(stepTimer);
+        clearTimeout(timer);
         sibling.destroy();
         sibling = null;
         index = 0;
@@ -241,7 +247,9 @@ function intro(g = DEFAULT_GROUP) {
                 left: res.pageX,
                 top: res.pageY
             };
+            // hide the tooltip
             refModal.toggleTooltip(false);
+
             timer = setTimeout(() => {
                 refModal.innerElement = element;
                 refModal.currentStep = index+1;
@@ -261,9 +269,7 @@ function intro(g = DEFAULT_GROUP) {
                 left: res.pageX - offsetW/2,
                 top: res.pageY - offsetW/2
             })
-        })
-
-
+        });
 
     }
 
@@ -292,6 +298,7 @@ class IntroModal extends Component {
         var duration = 300;
 
         var stepNumLeft = obj.left - 12;
+
         if (stepNumLeft < 0) {
             stepNumLeft = obj.left + obj.width - 12;
             if (stepNumLeft > CLIENT_WIDTH - 24) {
@@ -304,18 +311,22 @@ class IntroModal extends Component {
                 duration,
                 toValue: obj.width
             }),
+
             Animated.timing(this._aniHeight, {
                 duration,
                 toValue: obj.height
             }),
+
             Animated.timing(this._aniLeft, {
                 duration,
                 toValue: obj.left
             }),
+
             Animated.timing(this._aniTop, {
                 duration,
                 toValue: obj.top
             }),
+
             Animated.timing(this._aniStepNumLeft, {
                 duration,
                 toValue: stepNumLeft
@@ -356,15 +367,18 @@ class IntroModal extends Component {
          }
 
          switch (whereHorizontalPlace) {
+
              case 'left':
                 tooltip.right = Math.max(CLIENT_WIDTH - (obj.left + obj.width), 0);
                 tooltip.right = tooltip.right === 0 ? tooltip.right + margin : tooltip.right;
                 tooltip.maxWidth = CLIENT_WIDTH - tooltip.right - margin;
                 arrow.right = tooltip.right + margin;
                 break;
+
              case 'right':
                 tooltip.left = Math.max(obj.left, 0);
                 tooltip.left = tooltip.left === 0 ? tooltip.left + margin : tooltip.left;
+                tooltip.maxWidth = CLIENT_WIDTH - tooltip.left - margin;
                 arrow.left = tooltip.left + margin;
                 break;
              default:
@@ -372,11 +386,10 @@ class IntroModal extends Component {
 
          this.tooltip = tooltip;
          this.arrow = arrow;
-
-
     }
 
     toggleTooltip(isShow = true) {
+
         Animated.timing(this._aniOpacity, {
             toValue: isShow ? 1 : 0,
             duration: 200
@@ -406,30 +419,28 @@ class IntroModal extends Component {
                 }]}>
                     <Text style={[styles.stepNumText]}>{this.currentStep}</Text>
                 </Animated.View>
-                {/* <Animated.View style={[styles.toolTipOuter, this.tooltip]}> */}
                     <Animated.View style={[styles.arrow, this.arrow, {opacity: this._aniOpacity}]}></Animated.View>
-                    <Animated.View style={[styles.toolTip, this.tooltip, {opacity: this._aniOpacity}]}>
-                        <View style={{flex: 1, marginBottom: 10}}>
-                            {this.content || null}
+                <Animated.View style={[styles.toolTip, this.tooltip, {opacity: this._aniOpacity}]}>
+                    <View style={{flex: 1}}>
+                        {this.content || null}
+                    </View>
+                    <View style={[styles.introBar]}>
+                        <View style={[styles.introButton, {
+                            borderColor: '#999',
+                            marginRight: 20
+                        }]} onTouchStart={() => this.props.stop()}>
+                            <Text style={[styles.buttonText, {
+                                color: '#999'
+                            }]}>OK</Text>
                         </View>
-                        <View style={[styles.introBar]}>
-                            <View style={[styles.introButton, {
-                                borderColor: '#999',
-                                marginRight: 20
-                            }]} onTouchStart={() => this.props.stop()}>
-                                <Text style={[styles.buttonText, {
-                                    color: '#999'
-                                }]}>OK</Text>
-                            </View>
-                            <View style={[styles.introButton]} onTouchStart={() => this.props.prev()}>
-                                <Text style={[styles.buttonText]}>prev</Text>
-                            </View>
-                            <View style={[styles.introButton, {marginLeft: 8}]} onTouchStart={() => this.props.next()}>
-                                <Text style={[styles.buttonText]}>next</Text>
-                            </View>
+                        <View style={[styles.introButton]} onTouchStart={() => this.props.prev()}>
+                            <Text style={[styles.buttonText]}>prev</Text>
                         </View>
-                    </Animated.View>
-                {/* </Animated.View> */}
+                        <View style={[styles.introButton, {marginLeft: 8}]} onTouchStart={() => this.props.next()}>
+                            <Text style={[styles.buttonText]}>next</Text>
+                        </View>
+                    </View>
+                </Animated.View>
             </View>
         );
     }
