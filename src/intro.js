@@ -2,7 +2,7 @@
 * @Author: liuyany.liu <lyan>
 * @Date:   2017-02-07 15:45:15
 * @Last modified by:   lyan
-* @Last modified time: 2017-02-26 10:05:47
+* @Last modified time: 2017-02-26 10:14:56
 */
 
 import React, {
@@ -38,6 +38,7 @@ export default class Example extends Component {
               <Intro style={[styles.content]}
                   content="这是啥"
                   disable={false}
+                  group="test1"
                   step={1}
               >
                   <TextInput
@@ -142,8 +143,12 @@ class Intro extends Component {
 var hilightBox = null;
 var refHilightBox;
 var zIndex  = 99999;
+var DEFAULTOPTIONS = {
+    group: DEFAULT_GROUP
+};
 
-function intro(opts = {group: DEFAULT_GROUP}) {
+function intro(opts = {}) {
+    opts = Object.assign({}, DEFAULTOPTIONS, opts);
     // 1 拿出分组数据
     var group   = groupMap[opts.group];
     var stepArr = Object.keys(group).sort();

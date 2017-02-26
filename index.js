@@ -22,13 +22,13 @@ import React, {
 } from 'react-native';
 
 // import Calendar from './src/calendar';
-import Intro from './src/intro.js';
+import IntroDemo from './src/intro.js';
 
 class qrnTest extends Component {
     render() {
         return (
           <View style={styles.container}>
-              <Intro />
+              <IntroDemo />
           </View>
         );
     }
