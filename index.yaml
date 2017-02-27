@@ -1,4 +1,0 @@
-hybridid : hybridid # hybridid
-iOS_vid : 80011116 # 所需iOS客户端最低版本
-android_vid : 80001099,com.mqunar.react_2 # 所需android客户端及模块最低版本
-rnpackage : true

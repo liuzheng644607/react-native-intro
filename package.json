@@ -1,18 +1,24 @@
 {
-  "name": "qrnTest",
-  "version": "0.0.1",
-  "private": true,
+  "name": "react-native-intro",
+  "version": "0.0.0",
+  "description": "A way for new feature introduction and step-by-step users guide for your react-native app",
+  "main": "index.js",
   "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start",
-    "bundle": "node node_modules/react-native/packager/react-packager/outputBundles.js -c -b biz"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
-    "react-native": "git+ssh://git@gitlab.corp.qunar.com:react_native/qunar_react_native.git#v1.6.0",
-    "react-native-root-siblings": "^1.1.2",
-    "react-native-scrollable-tab-view": "^0.7.0"
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/liuzheng644607/react-native-intro.git"
   },
-  "devDependencies": {
-    "commander": "2.9.0",
-    "chalk": "1.1.1"
-  }
+  "keywords": [
+    "react-native-intro",
+    "intro",
+    "react-native"
+  ],
+  "author": "lyan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/liuzheng644607/react-native-intro/issues"
+  },
+  "homepage": "https://github.com/liuzheng644607/react-native-intro#readme"
 }

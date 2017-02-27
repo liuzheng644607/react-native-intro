@@ -1,51 +1,11 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @includeModules QImageSet,QFontSet
- */
-'use strict';
-import React, {
-  AppRegistry,
-  Component,
-  StyleSheet,
-  TouchableOpacity,
-  cloneElement,
-  Text,
-  View,
-  Platform,
-  Image,
-  ScrollView,
-  Dimensions,
-  PanResponder,
-  TextInput,
-  Animated
-} from 'react-native';
+* @Author: liuyany.liu <lyan>
+* @Date:   2016-12-20 14:27:41
+* @Last modified by:   lyan
+* @Last modified time: 2017-02-27 19:35:29
+*/
 
-// import Calendar from './src/calendar';
-import IntroDemo from './src/intro.js';
+import Intro, { intro } from './src/intro';
 
-class qrnTest extends Component {
-    render() {
-        return (
-          <View style={styles.container}>
-              <IntroDemo />
-          </View>
-        );
-    }
-}
-
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    right: 0,
-    bottom:0,
-    paddingVertical: 64,
-    justifyContent: 'center',
-    alignItems: 'center',
-    // backgroundColor: '#F5FCFF',
-  }
-});
-
-AppRegistry.registerComponent('bnbrn', () => qrnTest);
+export default Intro;
+export intro;

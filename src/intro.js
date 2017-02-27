@@ -2,102 +2,37 @@
 * @Author: liuyany.liu <lyan>
 * @Date:   2017-02-07 15:45:15
 * @Last modified by:   lyan
-* @Last modified time: 2017-02-26 10:14:56
+* @Last modified time: 2017-02-27 19:50:03
 */
 
-import React, {
-  AppRegistry,
-  Component,
+import {
   StyleSheet,
   TouchableOpacity,
-  cloneElement,
-  Text,
   View,
-  Platform,
-  Image,
-  ScrollView,
+  Text,
   Dimensions,
-  PanResponder,
-  TextInput,
   Animated
 } from 'react-native';
 
-import EventEmitter from 'EventEmitter';
+import React, {
+    cloneElement,
+    Component
+} from 'react';
+
 import RootSiblings from './SiblingsManager';
 
 const { width, height } = Dimensions.get('window');
 const [CLIENT_WIDTH, CLIENT_HEIGHT] = [width, height]
-
-export default class Example extends Component {
-    state = {
-        value: 'hahah'
-    }
-    render() {
-        return (
-          <View style={styles.container}>
-              <Intro style={[styles.content]}
-                  content="这是啥"
-                  disable={false}
-                  group="test1"
-                  step={1}
-              >
-                  <TextInput
-                      style={{borderWidth: 1, height: 44}}
-                      onChangeText={(v) => this.setState({value: v})}
-                      value={this.state.value}/>
-                      <Intro style={{top: 200, left: 100, position: 'absolute'}}
-                          group="test1"
-                          content={
-                              <View style={{alignItems: 'center'}}>
-                                    <Image source={{uri: 'https://avatars3.githubusercontent.com/u/8045477?v=3&s=460'}}
-                                    style={{width: 100, height: 100}}></Image>
-                              </View>
-                          }
-                          disable={false}
-                          step={2}>
-                          <Text>呵呵呵呵</Text>
-                      </Intro>
-              </Intro>
-              <Intro style={{top: 400, left: 0, position: 'absolute'}}
-               group="test1"
-               content="红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框"
-               disable={false}
-               step={3}>
-                <View style={{width: 400, height: 100, backgroundColor: '#ff0000'}}>
-
-                </View>
-              </Intro>
-              <Intro
-                  group="test1"
-                  step={4}
-                  content="点击我！"
-                  style={[styles.button, {position: 'absolute'}]}
-                  >
-                      <TouchableOpacity onPress={ this._showModal.bind(this)}><Text>点我</Text></TouchableOpacity>
-
-              </Intro>
-          </View>
-        );
-    }
-
-    componentDidMount() {
-        this.intro = intro({group: 'test1'});
-    }
-
-    _showModal() {
-        this.intro.start();
-    }
-}
-
+const DEFAULT_GROUP = 'DEFAULT_GROUP';
 
 var sibling;
 var groupMap = {};
-var DEFAULT_GROUP = 'DEFAULT_GROUP';
 
-class Intro extends Component {
+export default class Intro extends Component {
     setNativeProps(obj) {
         this._refIntro.setNativeProps(obj);
     }
+
     componentDidMount() {
         const { group, step, content, disable } = this.props;
 
@@ -130,12 +65,14 @@ class Intro extends Component {
         //     delete groupMap[group && DEFAULT_GROUP];
         // }
     }
+
     render() {
         this.html = (
             <TouchableOpacity activeOpacity={1} {...this.props} ref={c => this._refIntro = c}>
                 {this.props.children}
             </TouchableOpacity>
         );
+
         return this.html
     }
 }
@@ -143,25 +80,28 @@ class Intro extends Component {
 var hilightBox = null;
 var refHilightBox;
 var zIndex  = 99999;
+var offsetW = 4;
 var DEFAULTOPTIONS = {
     group: DEFAULT_GROUP
 };
 
-function intro(opts = {}) {
+export function intro(opts = {}) {
     opts = Object.assign({}, DEFAULTOPTIONS, opts);
+
     // 1 拿出分组数据
-    var group   = groupMap[opts.group];
-    var stepArr = Object.keys(group).sort();
-    var len     = stepArr.length;
-    var index   = 0;
+    var group     = groupMap[opts.group];
+    var stepArr   = Object.keys(group).sort();
+    var len       = stepArr.length;
+    var index     = 0;
+    var timer     = null;
+    var stepTimer = null;
+    var retn      = { start, stop };
+
     var refContainer;
     var target;
     var refTarget;
     var element;
     var refModal;
-    var retn = { start, stop };
-    var timer = null;
-    var stepTimer = null;
 
     /**
      * 开始
@@ -229,15 +169,17 @@ function intro(opts = {}) {
 
         var currentStep = group[stepArr[index]];
         var content = currentStep.content;
+
         target = currentStep.target;
         refTarget = currentStep.refTarget;
+
         element = target.html;
         element = cloneElement(element, {
             style: [element.props.style, {position: 'absolute',left: 0, top: 0}]
         });
+
         refModal.innerElement = null;
         refModal.forceUpdate();
-
 
         new Promise((resolve, reject) => {
             refTarget.measure((x, y, width, height, pageX, pageY) => {
@@ -265,9 +207,8 @@ function intro(opts = {}) {
                     });
                 });
                 refModal.toggleTooltip(true);
-            }, 300)
+            }, 300);
 
-            var offsetW = 4;
             refModal.animateMove({
                 width: res.width + offsetW,
                 height: res.height + offsetW,
@@ -369,6 +310,7 @@ class IntroModal extends Component {
                 arrow.bottom = tooltip.bottom - margin + 3;
              break;
              default:
+                // nothing todo
          }
 
          switch (whereHorizontalPlace) {
@@ -387,6 +329,7 @@ class IntroModal extends Component {
                 arrow.left = tooltip.left + margin;
                 break;
              default:
+                // nothing todo
          }
 
          this.tooltip = tooltip;
@@ -399,9 +342,11 @@ class IntroModal extends Component {
             toValue: isShow ? 1 : 0,
             duration: 200
         }).start();
+
     }
 
     render() {
+
         return (
             <View style={[styles.container, {zIndex}]}>
                 <TouchableOpacity activeOpacity={0.8} style={[styles.sibling]} onPress={this.props.stop}/>
@@ -452,51 +397,49 @@ class IntroModal extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-      position: 'absolute',
-      left: 0,
-      top: 0,
-      right: 0,
-      bottom:0,
-  },
-  hilightBox: {
+    container: {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom:0,
+    },
+
+    hilightBox: {
       position: 'absolute',
       backgroundColor: 'rgba(255,255,255,1)',
       borderRadius: 2,
-  },
-  content: {
-      width: 200,
-      height: 300,
-      position: 'absolute',
-      top: 100,
-      left: 100,
-      borderWidth: 1,
-      borderColor: 'red'
-  },
-  arrow: {
+    },
+
+    arrow: {
       position: 'absolute',
       borderColor: 'transparent',
       borderWidth: 5
-  },
-  up: {
+    },
+
+    up: {
       borderBottomColor: '#fff'
-  },
-  down: {
+    },
+
+    down: {
       borderTopColor: '#fff'
-  },
-  toolTipOuter: {
+    },
+
+    toolTipOuter: {
       position: 'absolute',
       minWidth: 180,
       maxWidth: 300
-  },
-  toolTip: {
+    },
+
+    toolTip: {
       position: 'absolute',
       padding: 5,
       backgroundColor: '#fff',
       borderRadius: 3,
       overflow: 'hidden'
-  },
-  stepNum: {
+    },
+
+    stepNum: {
       position: 'absolute',
       width: 24,
       height: 24,
@@ -507,47 +450,48 @@ const styles = StyleSheet.create({
       overflow: 'hidden',
       alignItems: 'center',
       justifyContent: 'center'
-  },
-  stepNumText: {
+    },
+
+    stepNumText: {
       backgroundColor: 'rgba(255,255,255,0)',
       fontWeight: 'bold',
       color: '#fff'
-  },
-  sibling: {
+    },
+
+    sibling: {
       position: 'absolute',
       left: 0,
       top: 0,
       right: 0,
       bottom: 0,
       backgroundColor: 'rgba(0,0,0,0.8)'
-  },
-  button: {
-    width: 100,
-    height: 44,
-    position: 'absolute',
-    bottom: 100
-  },
-  introButton: {
+    },
+
+    introButton: {
       padding: 2,
       borderColor: '#28a3ef',
       borderWidth: 1,
       borderRadius: 2,
-  },
-  buttonText: {
+    },
+
+    buttonText: {
       fontSize: 12,
       textAlign: 'center',
       color: '#28a3ef'
-  },
-  introBar: {
+    },
+
+    introBar: {
       marginTop: 10,
       flexDirection: 'row',
       justifyContent: 'flex-end'
-  },
-  modalContent: {
+    },
+
+    modalContent: {
       position: 'absolute',
       overflow: 'hidden'
-  },
-  modal: {
+    },
+
+    modal: {
       backgroundColor: 'rgba(0,0,0,0.5)',
-  }
+    }
 });
