@@ -6,7 +6,7 @@ Run ```npm install react-native-intro --save``` in your Project dir
 
 # Usage
 
-1. react-native-intro exports two APIs, default is ```Intro``` component, and the other one is ```intro``` function. see ![demo](./demo/demo.js) get more informations.
+1. react-native-intro exports two APIs, default is ```Intro``` component, and the other one is ```intro``` function. see [demo](./demo/) get more informations.
 
 2. Use ```Intro``` component wrap your components and pass some props to Intro. Maybe you need set the style props too;
 
