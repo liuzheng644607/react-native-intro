@@ -31,8 +31,9 @@ componentDidMount() {
 ```
 
 #Props
-content: string | ReactElement
-step: the step sort
+###content: string | ReactElement
+
+###step: the step sort
 
 ![ios screen shoot](./demo/ios.gif)
 ![android screen shoot](./demo/android.gif)
