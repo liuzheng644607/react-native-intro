@@ -2,7 +2,7 @@
 * @Author: liuyany.liu <lyan>
 * @Date:   2017-02-27 19:21:32
 * @Last modified by:   lyan
-* @Last modified time: 2017-02-27 19:38:58
+* @Last modified time: 2017-02-27 22:08:06
 */
 
 import {
@@ -18,7 +18,7 @@ import React, {
     Component
 } from 'react';
 
-import Intro, { intro } from '../src/intro';
+import Intro, { intro } from 'react-native-intro';
 
 export default class Example extends Component {
     state = {
@@ -29,7 +29,6 @@ export default class Example extends Component {
           <View style={styles.container}>
               <Intro style={[styles.content]}
                   content="这是啥"
-                  disable={false}
                   group="test1"
                   step={1}
               >
@@ -45,7 +44,6 @@ export default class Example extends Component {
                                     style={{width: 100, height: 100}}></Image>
                               </View>
                           }
-                          disable={false}
                           step={2}>
                           <Text>呵呵呵呵</Text>
                       </Intro>
@@ -53,7 +51,6 @@ export default class Example extends Component {
               <Intro style={{top: 400, left: 0, position: 'absolute'}}
                group="test1"
                content="红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框红色方框"
-               disable={false}
                step={3}>
                 <View style={{width: 400, height: 100, backgroundColor: '#ff0000'}}>
 

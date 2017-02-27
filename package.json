@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/liuzheng644607/react-native-intro/issues"
   },
+  "dependencies": {
+      "react-native-root-siblings": "^1.1.2"
+  },
   "homepage": "https://github.com/liuzheng644607/react-native-intro#readme"
 }

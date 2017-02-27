@@ -2,7 +2,7 @@
 * @Author: liuyany.liu <lyan>
 * @Date:   2017-02-07 15:45:15
 * @Last modified by:   lyan
-* @Last modified time: 2017-02-27 19:50:03
+* @Last modified time: 2017-02-27 21:53:31
 */
 
 import {
@@ -19,7 +19,7 @@ import React, {
     Component
 } from 'react';
 
-import RootSiblings from './SiblingsManager';
+import RootSiblings from 'react-native-root-siblings';
 
 const { width, height } = Dimensions.get('window');
 const [CLIENT_WIDTH, CLIENT_HEIGHT] = [width, height]
