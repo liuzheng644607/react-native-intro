@@ -23,7 +23,7 @@ import Intro, { intro } from 'react-native-intro';
 componentDidMount() {
 
     // and start
-    var myIntro = intro();
+    var myIntro = intro({group: 'yourGroup'});
     myIntro.start();
 
 }

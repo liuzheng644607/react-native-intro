@@ -2,7 +2,7 @@
 * @Author: liuyany.liu <lyan>
 * @Date:   2017-02-07 15:45:15
 * @Last modified by:   lyan
-* @Last modified time: 2017-03-02 20:44:53
+* @Last modified time: 2017-03-02 20:54:24
 */
 
 import {
@@ -96,9 +96,11 @@ var DEFAULTOPTIONS = {
 
 export function intro(opts = {}) {
     opts = Object.assign({}, DEFAULTOPTIONS, opts);
-
     // 1 拿出分组数据
     var group     = groupMap[opts.group];
+
+    if (!group) return;
+
     var stepArr   = Object.keys(group).sort();
     var len       = stepArr.length;
     var index     = 0;
