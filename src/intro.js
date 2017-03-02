@@ -2,7 +2,7 @@
 * @Author: liuyany.liu <lyan>
 * @Date:   2017-02-07 15:45:15
 * @Last modified by:   lyan
-* @Last modified time: 2017-02-27 21:53:31
+* @Last modified time: 2017-03-02 20:44:53
 */
 
 import {
@@ -22,13 +22,14 @@ import React, {
 import RootSiblings from 'react-native-root-siblings';
 
 const { width, height } = Dimensions.get('window');
-const [CLIENT_WIDTH, CLIENT_HEIGHT] = [width, height]
+const [ CLIENT_WIDTH, CLIENT_HEIGHT ] = [ width, height ]
 const DEFAULT_GROUP = 'DEFAULT_GROUP';
 
 var sibling;
 var groupMap = {};
 
 export default class Intro extends Component {
+
     setNativeProps(obj) {
         this._refIntro.setNativeProps(obj);
     }
@@ -47,8 +48,11 @@ export default class Intro extends Component {
                 content,
                 disable,
                 target: this,
-                refTarget: this._refIntro
+                refTarget: this._refIntro,
+                _index: 0
             };
+        } else {
+            ++(groupA[step]._index);
         }
     }
 
@@ -57,13 +61,18 @@ export default class Intro extends Component {
     }
 
     componentWillUnmount() {
-        // const { group, step, content, disable } = this.props;
-        //
-        // delete groupMap[group || DEFAULT_GROUP][step];
-        //
-        // if (Object.keys(groupMap[group || DEFAULT_GROUP]).length === 0) {
-        //     delete groupMap[group && DEFAULT_GROUP];
-        // }
+        const { group, step, content, disable } = this.props;
+        var groupA = groupMap[group || DEFAULT_GROUP][step];
+
+        if (groupA._index > 0) {
+            --groupA._index;
+        } else {
+            delete groupMap[group || DEFAULT_GROUP][step]
+            if (Object.keys(groupMap[group || DEFAULT_GROUP]).length === 0) {
+                delete groupMap[group && DEFAULT_GROUP];
+            }
+        }
+
     }
 
     render() {

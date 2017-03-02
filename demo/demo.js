@@ -2,7 +2,7 @@
 * @Author: liuyany.liu <lyan>
 * @Date:   2017-02-27 19:21:32
 * @Last modified by:   lyan
-* @Last modified time: 2017-02-27 22:08:06
+* @Last modified time: 2017-03-02 20:43:49
 */
 
 import {
@@ -40,7 +40,7 @@ export default class Example extends Component {
                           group="test1"
                           content={
                               <View style={{alignItems: 'center'}}>
-                                    <Image source={{uri: 'https://avatars3.githubusercontent.com/u/8045477?v=3&s=460'}}
+                                    <Image source={{uri: 'https://dn-coding-net-production-static.qbox.me/static/7a51352fa766f4176d7c4543339e0e98.png'}}
                                     style={{width: 100, height: 100}}></Image>
                               </View>
                           }
