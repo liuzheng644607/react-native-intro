@@ -1,6 +1,6 @@
 {
   "name": "react-native-intro",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A way for new feature introduction and step-by-step users guide for your react-native app",
   "main": "index.js",
   "scripts": {
@@ -21,7 +21,7 @@
     "url": "https://github.com/liuzheng644607/react-native-intro/issues"
   },
   "dependencies": {
-      "react-native-root-siblings": "^1.1.2"
+    "react-native-root-siblings": "^1.1.2"
   },
   "homepage": "https://github.com/liuzheng644607/react-native-intro#readme"
 }
