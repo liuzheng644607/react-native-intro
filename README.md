@@ -38,5 +38,7 @@ componentDidMount() {
 # Warning
  *This Component does not support your component Wrapped by `Redux connect` currently;*
 
+# screen shorts
+
 ![ios screen shoot](./demo/ios.gif)
 ![android screen shoot](./demo/android.gif)
