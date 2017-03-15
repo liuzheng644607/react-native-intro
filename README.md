@@ -35,5 +35,8 @@ componentDidMount() {
 
 ###step: the step sort
 
+# Warning
+ *This Component does not support your component Wrapped by `Redux connect` currently;*
+
 ![ios screen shoot](./demo/ios.gif)
 ![android screen shoot](./demo/android.gif)
