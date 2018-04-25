@@ -5,7 +5,8 @@
 * @Last modified time: 2017-02-27 21:54:23
 */
 
-import Intro, { intro } from './src/Intro';
+import {IntroManage} from './src/IntroManage';
+import {Intro} from './src/IntroComponent';
 
 export default Intro;
-export { intro }
+export { IntroManage }
