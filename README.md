@@ -11,7 +11,7 @@ Run ```npm install react-native-intro --save``` in your Project dir
 2. Use ```Intro``` component wrap your components and pass some props to Intro. Maybe you need set the style props too;
 
 ```
-import Intro, { intro } from 'react-native-intro';
+import Intro, {IntroManage} from 'react-native-intro';
 
 <Intro
     content={"hello world"}
@@ -23,7 +23,7 @@ import Intro, { intro } from 'react-native-intro';
 componentDidMount() {
 
     // and start
-    var myIntro = intro({group: 'yourGroup'});
+    var myIntro = new IntroManage();
     myIntro.start();
 
 }
