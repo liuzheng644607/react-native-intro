@@ -14,6 +14,11 @@ const [CLIENT_WIDTH, CLIENT_HEIGHT] = [width, height];
 let zIndex = 999;
 
 export class IntroModal extends Component {
+  static defaultProps = {
+    showStepNumber: true,
+    touchable: false,
+    maskClosable: true,
+  };
   constructor(props) {
     super(props);
 
@@ -135,13 +140,13 @@ export class IntroModal extends Component {
   }
 
   render() {
-    const { contentRender } = this.props;
+    const { contentRender, showStepNumber, touchable, maskStyle, maskClosable } = this.props;
     return (
       <View style={[styles.container, { zIndex }]}>
         <TouchableOpacity
-          activeOpacity={0.8}
-          style={[styles.sibling]}
-          onPress={this.props.stop}
+          activeOpacity={1}
+          style={[styles.sibling, maskStyle]}
+          onPress={maskClosable && this.props.stop}
         />
         <Animated.View
           ref={(c) => (this.refHilightBox = c)}
@@ -161,19 +166,25 @@ export class IntroModal extends Component {
           style={[styles.modalContent]}
         >
           {this.innerElement}
+          {/* mask the element */}
+          {touchable ? null : <View style={{position: 'absolute', left: 0, right: 0, top: 0, bottom: 0}} />}
         </View>
-        <Animated.View
-          style={[
-            styles.stepNum,
-            { zIndex: zIndex + 1000 },
-            {
-              left: this._aniStepNumLeft,
-              top: Animated.add(this._aniTop, -12),
-            },
-          ]}
-        >
-          <Text style={[styles.stepNumText]}>{this.currentStep}</Text>
-        </Animated.View>
+        {
+          showStepNumber ? (
+            <Animated.View
+              style={[
+                styles.stepNum,
+                { zIndex: zIndex + 1000 },
+                {
+                  left: this._aniStepNumLeft,
+                  top: Animated.add(this._aniTop, -12),
+                },
+              ]}
+            >
+              <Text style={[styles.stepNumText]}>{this.currentStep}</Text>
+            </Animated.View>
+          ): null
+        }
         <Animated.View
           style={[styles.arrow, this.arrow, { opacity: this._aniOpacity }]}
         />

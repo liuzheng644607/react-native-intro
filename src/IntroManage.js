@@ -33,7 +33,7 @@ export class IntroManage {
 
     this.stepArr = Object.keys(this.introData).sort();
     this.stepLength = this.stepArr.length;
-    this.index = 0;
+    this.index = opts.startIndex || 0;
     this.timer = null;
     this.stepTimer = null;
 
@@ -51,6 +51,10 @@ export class IntroManage {
             prev={this.prev}
             stop={this.stop}
             contentRender={this.opts.contentRender}
+            showStepNumber={this.opts.showStepNumber}
+            maskStyle={this.opts.maskStyle}
+            touchable={this.opts.touchable}
+            maskClosable={this.opts.maskClosable}
           />
         )
       );
@@ -71,7 +75,6 @@ export class IntroManage {
   }
 
   prev = () => {
-    
     if (this.index <= 0) {
       if (this.loop) {
         this.index = this.stepLength;
@@ -98,6 +101,7 @@ export class IntroManage {
   }
 
   toStep = (index) => {
+    this.index = index;
     const currentStep = this.introData[this.stepArr[index]];
     const content = currentStep.content;
 
